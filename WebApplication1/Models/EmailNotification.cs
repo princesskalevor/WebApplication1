@@ -9,7 +9,6 @@ namespace WebApplication1.Models
     {
         [Key]
         [Column("NOTIFICATIONID")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int NotificationId { get; set; }
 
         [Column("SUBJECT")]

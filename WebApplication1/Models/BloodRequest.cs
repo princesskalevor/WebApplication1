@@ -9,7 +9,6 @@ namespace WebApplication1.Models
     {
         [Key]
         [Column("REQUESTID")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
 
         [Required]
@@ -24,9 +23,9 @@ namespace WebApplication1.Models
 
         [Required]
         [Column("REQUESTEDDATE")]
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "Requested Date")]
-        public DateTime RequestedDate { get; set; }
+        public DateOnly RequestedDate { get; set; }
 
         [Required]
         [Column("STATUS")]

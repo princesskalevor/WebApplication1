@@ -8,7 +8,6 @@ namespace WebApplication1.Models
     {
         [Key]
         [Column("DONORID")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DonorId { get; set; }
 
         [Required]

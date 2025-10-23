@@ -1,0 +1,46 @@
+﻿@model List<ConsoleApp2.StudentScores>;
+
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2>Scores Index Page</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a href="/Student/Filter" class="btn btn-outline-info">
+                Filter Scores
+            </a>
+            <a href="/Student/Add" class="btn btn-outline-primary">
+                Add New Scores
+            </a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Course Name</th>
+            <th>Mark</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>@Model[i].StudentId</td>
+                <td>@Model[i].FirstName</td>
+                <td>@Model[i].LastName</td>
+                <td>@Model[i].Course</td>
+                <td>@Model[i].Mark</td>
+                <td>@Model[i].Grade</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

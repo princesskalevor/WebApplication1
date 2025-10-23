@@ -1,0 +1,83 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BloodConnect</title>
+
+    <!-- ✅ Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ✅ Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- ✅ Favicon (Optional) -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" />
+
+    <!-- ✅ Custom Styles (Optional: your own overrides) -->
+    <style>
+        body {
+            background-color: #f9fafb;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(to right, #ef4444, #f59e0b);
+            color: white !important;
+        }
+
+        .tab-btn:not(.active) {
+            color: #4b5563;
+        }
+
+        /* Smooth transitions */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- 🌟 Navigation Bar -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-red-600 flex items-center gap-2">
+                🩸 BloodConnect
+            </h1>
+            <nav class="hidden md:flex space-x-6 text-gray-700 font-medium">
+                <a href="/" class="hover:text-red-600">Home</a>
+                <a href="#requests" class="hover:text-red-600">Requests</a>
+                <a href="#drives" class="hover:text-red-600">Drives</a>
+                <a href="#contact" class="hover:text-red-600">Contact</a>
+            </nav>
+            <button class="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:shadow-lg">
+                Login
+            </button>
+        </div>
+    </header>
+
+    <!-- 🌟 Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-10">
+        @RenderBody()
+    </main>
+
+    <!-- 🌟 Footer -->
+    <footer class="bg-gray-900 text-gray-300 text-center py-6 mt-12">
+        <p class="text-sm">
+            &copy; @DateTime.Now.Year BloodConnect — Built with ❤️ by KNUST Students
+        </p>
+    </footer>
+
+    <!-- ✅ Activate Lucide Icons -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿@model List<Student>;
+
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2>Student Index Page</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a href="/Student/Filter" class="btn btn-outline-info">
+                Filter Students
+            </a>
+            <a href="/Student/Add" class="btn btn-outline-primary">
+                Add New Student
+            </a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for(int i =0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>@Model[i].StudentId</td>
+                <td>@Model[i].FirstName</td>
+                <td>@Model[i].LastName</td>
+                <td>@Model[i].Gender</td>
+                <td>@Model[i].BirthDate</td>
+                <td>
+
+                    <a href="/Student/Edit/@Model[i].StudentId" 
+                        class="btn btn-outline-warning btn-sm">
+                        Edit
+                    </a>
+
+                    <a href="/Student/Delete/@Model[i].StudentId" 
+                        class="btn btn-outline-danger btn-sm">
+                        Delete
+                    </a>
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

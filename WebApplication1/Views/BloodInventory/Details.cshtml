@@ -1,0 +1,56 @@
+@model WebApplication1.Models.BloodInventory
+
+@{
+    ViewData["Title"] = "Inventory Details";
+}
+
+<div class="max-w-3xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <i data-lucide="eye" class="w-8 h-8 text-orange-600"></i>
+            Inventory Details
+        </h1>
+        <p class="text-gray-600 mt-2">Details for unit #@Model.UnitId</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <div class="text-sm text-gray-500">Unit ID</div>
+                <div class="text-lg font-semibold text-gray-900">#@Model.UnitId</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-500">Blood Type</div>
+                <div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                        @Model.BloodType
+                    </span>
+                </div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-500">Quantity</div>
+                <div class="text-lg font-semibold text-gray-900">@(Model.Quantity?.ToString() ?? "Not specified") unit(s)</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-500">Expiration Date</div>
+                <div class="text-lg text-gray-900">@Model.ExpirationDate.ToString("MMM dd, yyyy")</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-500">Storage Location</div>
+                <div class="text-lg text-gray-900">@(Model.StorageLocation ?? "Not specified")</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-500">Status</div>
+                <div class="text-lg text-gray-900">@(Model.Status ?? "Unknown")</div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+            <a href="/BloodInventory" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition">Back to List</a>
+            <div class="flex gap-3">
+                <a href="/BloodInventory/Edit/@Model.UnitId" class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Edit</a>
+                <a href="/BloodInventory/Delete/@Model.UnitId" class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>

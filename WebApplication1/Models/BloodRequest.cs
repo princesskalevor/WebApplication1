@@ -4,60 +4,43 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
-    [Table("BloodRequests")]
+    [Table("BLOODREQUEST")]
     public class BloodRequest
     {
         [Key]
-        [Column("RequestId")]
+        [Column("REQUESTID")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
 
-        [Column("PatientName")]
-        [Display(Name = "Full Name")]
-        public string? Name { get; set; }   // made nullable
+        [Required]
+        [Column("BLOODTYPEREQUIRED")]
+        [StringLength(5)]
+        [Display(Name = "Blood Type Required")]
+        public string BloodTypeRequired { get; set; }
 
-        [NotMapped]
-        public string? PatientName
-        {
-            get => Name;
-            set => Name = value;
-        }
+        [Column("QUANTITYREQUESTED")]
+        [Display(Name = "Quantity Requested")]
+        public int? QuantityRequested { get; set; }
 
-        [Column("Email")]
-        [EmailAddress]
-        public string? Email { get; set; }  // made nullable
+        [Required]
+        [Column("REQUESTEDDATE")]
+        [DataType(DataType.DateTime)]
+        [Display(Name = "Requested Date")]
+        public DateTime RequestedDate { get; set; }
 
-        [Column("BloodType")]
-        [Display(Name = "Blood Type")]
-        public string? BloodType { get; set; }  // made nullable
+        [Required]
+        [Column("STATUS")]
+        [StringLength(50)]
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "Pending";
 
-        [Column("UnitsNeeded")]
-        [Display(Name = "Units Needed")]
-        [Range(1, 20, ErrorMessage = "You can request between 1 and 20 units.")]
-        public int? Units { get; set; }  // nullable int, in case database has null
+        [Required]
+        [Column("RECEIPIENTID")]
+        [Display(Name = "Recipient ID")]
+        public int RecipientId { get; set; }
 
-        [Column("RequestDate")]
-        [DataType(DataType.Date)]
-        [Display(Name = "Required Date")]
-        public DateTime? RequiredDate { get; set; }  // nullable date
-
-        [Column("Notes")]
-        public string? Notes { get; set; }
-
-        [Column("Status")]
-        [Display(Name = "Request Status")]
-        public string? Status { get; set; } = "Pending";
-
-        [Column("Request")]
-        [Display(Name = "Request Type")]
-        public string? Request { get; set; }  // made nullable
-
-        [Column("Hall")]
-        public string? Hall { get; set; }
-
-        [Column("Department")]
-        public string? Department { get; set; }
-
-        [Column("CreatedAt")]
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        // Navigation properties
+        [ForeignKey("RecipientId")]
+        public virtual Recipient Recipient { get; set; }
     }
 }

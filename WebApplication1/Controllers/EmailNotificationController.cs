@@ -1,29 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    public class BloodRequestController : Controller
+    public class EmailNotificationController : Controller
     {
         private readonly AppDbContext _appDbContext;
 
-        public BloodRequestController(AppDbContext appDbContext)
+        public EmailNotificationController(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }
 
-        // GET: /BloodRequest
+        // GET: /EmailNotification
         public async Task<IActionResult> Index()
         {
-            var bloodRequests = await _appDbContext.BloodRequest
-                .Include(br => br.Recipient)
-                .OrderByDescending(br => br.RequestedDate)
+            var emailNotifications = await _appDbContext.EmailNotification
+                .Include(en => en.Recipient)
+                .OrderByDescending(en => en.DateSent)
                 .ToListAsync();
-            return View(bloodRequests);
+            return View(emailNotifications);
         }
 
-        // GET: /BloodRequest/Details/5
+        // GET: /EmailNotification/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -31,18 +31,18 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var bloodRequest = await _appDbContext.BloodRequest
-                .Include(br => br.Recipient)
-                .FirstOrDefaultAsync(m => m.RequestId == id);
-            if (bloodRequest == null)
+            var emailNotification = await _appDbContext.EmailNotification
+                .Include(en => en.Recipient)
+                .FirstOrDefaultAsync(m => m.NotificationId == id);
+            if (emailNotification == null)
             {
                 return NotFound();
             }
 
-            return View(bloodRequest);
+            return View(emailNotification);
         }
 
-        // GET: /BloodRequest/Create
+        // GET: /EmailNotification/Create
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -50,23 +50,24 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        // POST: /BloodRequest/Create
+        // POST: /EmailNotification/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] BloodRequest bloodRequest)
+        public async Task<IActionResult> Create([FromForm] EmailNotification emailNotification)
         {
             if (ModelState.IsValid)
             {
-                _appDbContext.BloodRequest.Add(bloodRequest);
+                emailNotification.DateSent = DateTime.Now;
+                _appDbContext.EmailNotification.Add(emailNotification);
                 await _appDbContext.SaveChangesAsync();
-                TempData["Message"] = "Blood request created successfully!";
+                TempData["Message"] = "Email notification sent successfully!";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Recipients = await _appDbContext.Recipient.ToListAsync();
-            return View(bloodRequest);
+            return View(emailNotification);
         }
 
-        // GET: /BloodRequest/Edit/5
+        // GET: /EmailNotification/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +75,21 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var bloodRequest = await _appDbContext.BloodRequest.FindAsync(id);
-            if (bloodRequest == null)
+            var emailNotification = await _appDbContext.EmailNotification.FindAsync(id);
+            if (emailNotification == null)
             {
                 return NotFound();
             }
             ViewBag.Recipients = await _appDbContext.Recipient.ToListAsync();
-            return View(bloodRequest);
+            return View(emailNotification);
         }
 
-        // POST: /BloodRequest/Edit/5
+        // POST: /EmailNotification/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [FromForm] BloodRequest bloodRequest)
+        public async Task<IActionResult> Edit(int id, [FromForm] EmailNotification emailNotification)
         {
-            if (id != bloodRequest.RequestId)
+            if (id != emailNotification.NotificationId)
             {
                 return NotFound();
             }
@@ -97,13 +98,13 @@ namespace WebApplication1.Controllers
             {
                 try
                 {
-                    _appDbContext.Update(bloodRequest);
+                    _appDbContext.Update(emailNotification);
                     await _appDbContext.SaveChangesAsync();
-                    TempData["Message"] = "Blood request updated successfully!";
+                    TempData["Message"] = "Email notification updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BloodRequestExists(bloodRequest.RequestId))
+                    if (!EmailNotificationExists(emailNotification.NotificationId))
                     {
                         return NotFound();
                     }
@@ -115,10 +116,10 @@ namespace WebApplication1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Recipients = await _appDbContext.Recipient.ToListAsync();
-            return View(bloodRequest);
+            return View(emailNotification);
         }
 
-        // GET: /BloodRequest/Delete/5
+        // GET: /EmailNotification/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,36 +127,36 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var bloodRequest = await _appDbContext.BloodRequest
-                .Include(br => br.Recipient)
-                .FirstOrDefaultAsync(m => m.RequestId == id);
-            if (bloodRequest == null)
+            var emailNotification = await _appDbContext.EmailNotification
+                .Include(en => en.Recipient)
+                .FirstOrDefaultAsync(m => m.NotificationId == id);
+            if (emailNotification == null)
             {
                 return NotFound();
             }
 
-            return View(bloodRequest);
+            return View(emailNotification);
         }
 
-        // POST: /BloodRequest/Delete/5
+        // POST: /EmailNotification/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bloodRequest = await _appDbContext.BloodRequest.FindAsync(id);
-            if (bloodRequest != null)
+            var emailNotification = await _appDbContext.EmailNotification.FindAsync(id);
+            if (emailNotification != null)
             {
-                _appDbContext.BloodRequest.Remove(bloodRequest);
+                _appDbContext.EmailNotification.Remove(emailNotification);
                 await _appDbContext.SaveChangesAsync();
-                TempData["Message"] = "Blood request deleted successfully!";
+                TempData["Message"] = "Email notification deleted successfully!";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BloodRequestExists(int id)
+        private bool EmailNotificationExists(int id)
         {
-            return _appDbContext.BloodRequest.Any(e => e.RequestId == id);
+            return _appDbContext.EmailNotification.Any(e => e.NotificationId == id);
         }
     }
 }

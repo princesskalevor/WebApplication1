@@ -1,0 +1,170 @@
+@model WebApplication1.Models.Recipient
+
+@{
+    ViewData["Title"] = "Recipient Details";
+}
+
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <i data-lucide="user" class="w-8 h-8 text-blue-600"></i>
+                Recipient Details
+            </h1>
+            <p class="text-gray-600 mt-2">Complete information for @Model.FirstName @Model.LastName</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="/Recipient/Edit/@Model.RecipientId" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2">
+                <i data-lucide="edit" class="w-5 h-5"></i>
+                Edit Recipient
+            </a>
+            <a href="/Recipient" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-2">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Recipient Information -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Basic Information -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                Basic Information
+            </h2>
+            <dl class="space-y-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Recipient ID</dt>
+                    <dd class="text-lg font-semibold text-gray-900">#@Model.RecipientId</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                    <dd class="text-lg font-semibold text-gray-900">@Model.FirstName @Model.LastName</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="text-lg text-gray-900">@Model.Email</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Phone Number</dt>
+                    <dd class="text-lg text-gray-900">@Model.PhoneNumber</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Blood Type</dt>
+                    <dd class="text-lg">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            @Model.BloodType
+                        </span>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Quantity Requested</dt>
+                    <dd class="text-lg text-gray-900">@(Model.QuantityRequested?.ToString() ?? "Not specified") units</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Request Statistics -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="bar-chart" class="w-5 h-5 text-green-600"></i>
+                Request Statistics
+            </h2>
+            <dl class="space-y-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Total Requests</dt>
+                    <dd class="text-2xl font-bold text-gray-900">@Model.BloodRequests.Count()</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Pending Requests</dt>
+                    <dd class="text-lg text-yellow-600">@Model.BloodRequests.Count(r => r.Status == "Pending")</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Approved Requests</dt>
+                    <dd class="text-lg text-blue-600">@Model.BloodRequests.Count(r => r.Status == "Approved")</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Completed Requests</dt>
+                    <dd class="text-lg text-green-600">@Model.BloodRequests.Count(r => r.Status == "Completed")</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Total Notifications</dt>
+                    <dd class="text-lg text-gray-900">@Model.EmailNotifications.Count()</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Blood Requests History -->
+    <div class="mt-8 bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <i data-lucide="heart" class="w-5 h-5 text-red-600"></i>
+                Blood Request History (@Model.BloodRequests.Count() requests)
+            </h2>
+        </div>
+        <div class="p-6">
+            @if (Model.BloodRequests.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var request in Model.BloodRequests.OrderByDescending(r => r.RequestedDate))
+                            {
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        #@request.RequestId
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            @request.BloodTypeRequired
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        @(request.QuantityRequested?.ToString() ?? "Not specified") unit(s)
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        @request.RequestedDate.ToString("MMM dd, yyyy")
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @{
+                                            var statusColor = request.Status switch
+                                            {
+                                                "Pending" => "bg-yellow-100 text-yellow-800",
+                                                "Approved" => "bg-blue-100 text-blue-800",
+                                                "Completed" => "bg-green-100 text-green-800",
+                                                _ => "bg-gray-100 text-gray-800"
+                                            };
+                                        }
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @statusColor">
+                                            @request.Status
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-8">
+                    <i data-lucide="heart" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
+                    <p class="text-gray-500">This recipient hasn't made any blood requests yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

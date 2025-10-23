@@ -1,0 +1,132 @@
+@model WebApplication1.Models.Donor
+
+@{
+    ViewData["Title"] = "Delete Donor";
+}
+
+<div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-red-600 flex items-center gap-3">
+            <i data-lucide="user-x" class="w-8 h-8"></i>
+            Delete Donor
+        </h1>
+        <p class="text-gray-600 mt-2">Are you sure you want to delete this donor?</p>
+    </div>
+
+    <!-- Warning -->
+    <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex items-center">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600 mr-3"></i>
+            <div>
+                <h3 class="text-lg font-semibold text-red-800">Warning</h3>
+                <p class="text-red-700">This action cannot be undone. All donation records associated with this donor will also be deleted.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donor Information -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Donor Information</h2>
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Donor ID</dt>
+                <dd class="text-lg font-semibold text-gray-900">#@Model.DonorId</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                <dd class="text-lg font-semibold text-gray-900">@Model.FirstName @Model.LastName</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Phone Number</dt>
+                <dd class="text-lg text-gray-900">@Model.PhoneNumber</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Email Address</dt>
+                <dd class="text-lg text-gray-900">@Model.EmailAddress</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Blood Type</dt>
+                <dd class="text-lg">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        @Model.BloodType
+                    </span>
+                </dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Total Donations</dt>
+                <dd class="text-lg text-gray-900">@Model.BloodDonations.Count() donations</dd>
+            </div>
+        </dl>
+    </div>
+
+    <!-- Donation History Preview -->
+    @if (Model.BloodDonations.Any())
+    {
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Associated Donations</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach (var donation in Model.BloodDonations.Take(5))
+                        {
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    #@donation.DonationId
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        @donation.BloodType
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @donation.Quantity unit(s)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @donation.DonationDate?.ToString("MMM dd, yyyy")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.BloodDonations.Count() > 5)
+            {
+                <p class="text-sm text-gray-500 mt-2">... and @(Model.BloodDonations.Count() - 5) more donations</p>
+            }
+        </div>
+    }
+
+    <!-- Confirmation Form -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <form asp-action="Delete" method="post" class="space-y-6">
+            <input asp-for="DonorId" type="hidden" />
+            
+            <div class="flex items-center">
+                <input type="checkbox" id="confirmDelete" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" required>
+                <label for="confirmDelete" class="ml-2 text-sm text-gray-700">
+                    I understand that this action will permanently delete the donor and all associated donation records.
+                </label>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="/Donor/Details/@Model.DonorId" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    Delete Donor
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

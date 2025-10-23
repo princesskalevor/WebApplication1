@@ -1,0 +1,152 @@
+@model WebApplication1.Models.BloodRequest
+
+@{
+    ViewData["Title"] = "Blood Request Details";
+}
+
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <i data-lucide="heart" class="w-8 h-8 text-red-600"></i>
+                Blood Request Details
+            </h1>
+            <p class="text-gray-600 mt-2">Request #@Model.RequestId</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="/BloodRequest/Edit/@Model.RequestId" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2">
+                <i data-lucide="edit" class="w-5 h-5"></i>
+                Edit Request
+            </a>
+            <a href="/BloodRequest" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-2">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Request Information -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Request Details -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                Request Information
+            </h2>
+            <dl class="space-y-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Request ID</dt>
+                    <dd class="text-lg font-semibold text-gray-900">#@Model.RequestId</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Blood Type Required</dt>
+                    <dd class="text-lg">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                            @Model.BloodTypeRequired
+                        </span>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Quantity Requested</dt>
+                    <dd class="text-lg text-gray-900">@(Model.QuantityRequested?.ToString() ?? "Not specified") unit(s)</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Requested Date</dt>
+                    <dd class="text-lg text-gray-900">@Model.RequestedDate.ToString("MMM dd, yyyy 'at' h:mm tt")</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                    <dd class="text-lg">
+                        @{
+                            var statusColor = Model.Status switch
+                            {
+                                "Pending" => "bg-yellow-100 text-yellow-800",
+                                "Approved" => "bg-blue-100 text-blue-800",
+                                "Completed" => "bg-green-100 text-green-800",
+                                "Rejected" => "bg-red-100 text-red-800",
+                                _ => "bg-gray-100 text-gray-800"
+                            };
+                        }
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @statusColor">
+                            @Model.Status
+                        </span>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Recipient Information -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="user" class="w-5 h-5 text-green-600"></i>
+                Recipient Information
+            </h2>
+            @if (Model.Recipient != null)
+            {
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Recipient ID</dt>
+                        <dd class="text-lg font-semibold text-gray-900">#@Model.Recipient.RecipientId</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                        <dd class="text-lg font-semibold text-gray-900">@Model.Recipient.FirstName @Model.Recipient.LastName</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd class="text-lg text-gray-900">@Model.Recipient.Email</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Phone Number</dt>
+                        <dd class="text-lg text-gray-900">@Model.Recipient.PhoneNumber</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Blood Type</dt>
+                        <dd class="text-lg">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                @Model.Recipient.BloodType
+                            </span>
+                        </dd>
+                    </div>
+                </dl>
+            }
+            else
+            {
+                <p class="text-gray-500">Recipient information not available.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-8 bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <i data-lucide="settings" class="w-5 h-5 text-purple-600"></i>
+            Quick Actions
+        </h2>
+        <div class="flex flex-wrap gap-4">
+            @if (Model.Status == "Pending")
+            {
+                <a href="/BloodRequest/Edit/@Model.RequestId" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    Approve Request
+                </a>
+            }
+            @if (Model.Status == "Approved")
+            {
+                <a href="/BloodRequest/Edit/@Model.RequestId" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Mark as Completed
+                </a>
+            }
+            <a href="/EmailNotification/Create" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition flex items-center gap-2">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                Send Notification
+            </a>
+            <a href="/BloodInventory" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition flex items-center gap-2">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                Check Inventory
+            </a>
+        </div>
+    </div>
+</div>

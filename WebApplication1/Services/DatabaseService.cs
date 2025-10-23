@@ -14,14 +14,14 @@ namespace ConsoleApp2
 
         public DatabaseService()
         {
-            _connStr = "Server=DESKTOP-IF49OJQ\\SQLEXPRESS;Database=School;Trusted_Connection=True;TrustServerCertificate=True";
+            _connStr = "Server=DESKTOP-IF49OJQ\\SQLEXPRESS;Database=BloodConnect;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public void AddStudent(string fname, string lname,
+        public void AddDonor(string fname, string lname,
             char gender, DateOnly birthDate)
         {
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = @"INSERT INTO Student (FirstName, LastName, Gender, BirthDate) 
+            string sql = @"INSERT INTO Donor (FirstName, LastName, Gender, BirthDate) 
                             VALUES (@fname, @lname, @gender, @bdate)";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
@@ -33,15 +33,15 @@ namespace ConsoleApp2
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
-            Console.WriteLine("Student added successfully");
+            Console.WriteLine("Donor added successfully");
         }
 
-        public List<Student> GetStudents()
+        public List<Donor> GetDonors()
         {
-            List<Student> students = new List<Student>();
+            List<Donor> donors = new List<Donor>();
 
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = "SELECT * FROM Student";
+            string sql = "SELECT * FROM Donor";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
 
@@ -51,29 +51,29 @@ namespace ConsoleApp2
 
             while (reader.Read())
             {
-                Student temp = new Student();
-                temp.StudentId = reader.GetInt32(0);
+                Donor temp = new Donor();
+                temp.DonorId = reader.GetInt32(0);
                 temp.FirstName = reader.GetString(1);
                 temp.LastName = reader.GetString(2);
                 temp.Gender = reader.GetString(3)[0];
                 temp.BirthDate = DateOnly.FromDateTime(reader.GetDateTime(4));
 
-                students.Add(temp);
+                donors.Add(temp);
             }
 
             conn.Close();
 
-            return students;
+            return donors;
 
 
         }
 
-        public Student GetStudent(int id)
+        public Donor GetDonor(int id)
         {
-            Student student = new Student();
+            Donor donor = new Donor();
 
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = "SELECT * FROM Student Where studentId = @Id";
+            string sql = "SELECT * FROM Donor Where donorId = @Id";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
 
@@ -85,62 +85,62 @@ namespace ConsoleApp2
 
             if (reader.Read())
             {
-                Student temp = new Student();
-                temp.StudentId = reader.GetInt32(0);
+                Donor temp = new Donor();
+                temp.DonorId = reader.GetInt32(0);
                 temp.FirstName = reader.GetString(1);
                 temp.LastName = reader.GetString(2);
                 temp.Gender = reader.GetString(3)[0];
                 temp.BirthDate = DateOnly.FromDateTime(reader.GetDateTime(4));
 
-                student = temp;
+                donor = temp;
             }
 
             conn.Close();
 
-            return student;
+            return donor;
 
 
         }
 
-        public void updateStudent(Student student)
+        public void updateDonor(Donor donor)
         {
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = @"UPDATE Student set FirstName=@fname,
+            string sql = @"UPDATE Donor set FirstName=@fname,
                     LastName=@lname, Gender=@gender,
-                    BirthDate=@bdate WHERE StudentId=@studentId";
+                    BirthDate=@bdate WHERE DonorId=@donorId";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@fname", student.FirstName);
-            cmd.Parameters.AddWithValue("@lname", student.LastName);
-            cmd.Parameters.AddWithValue("@gender", student.Gender);
-            cmd.Parameters.AddWithValue("@bdate", student.BirthDate);
-            cmd.Parameters.AddWithValue("@studentId", student.StudentId);
+            cmd.Parameters.AddWithValue("@fname", donor.FirstName);
+            cmd.Parameters.AddWithValue("@lname", donor.LastName);
+            cmd.Parameters.AddWithValue("@gender", donor.Gender);
+            cmd.Parameters.AddWithValue("@bdate", donor.BirthDate);
+            cmd.Parameters.AddWithValue("@donorId", donor.DonorId);
 
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
-            Console.WriteLine("Student updated successfully");
+            Console.WriteLine("Donor updated successfully");
         }
 
-        public void deleteStudent(int id)
+        public void deleteDonor(int id)
         {
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = @"DELETE FROM Student WHERE 
-                StudentId=@studentId";
+            string sql = @"DELETE FROM Donor WHERE 
+                DonorId=@donorId";
             SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@studentId", id);
+            cmd.Parameters.AddWithValue("@donorId", id);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
-            Console.WriteLine("Student deleted successfully");
+            Console.WriteLine("Donor deleted successfully");
         }
 
-        public List<Student> FilterStudents(int year)
+        public List<Donor> FilterDonors(int year)
         {
-            List<Student> students = new List<Student>();
+            List<Donor> donors = new List<Donor>();
 
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = "SELECT * FROM Student Where YEAR(BIRTHDATE) > @year";
+            string sql = "SELECT * FROM Donor Where YEAR(BIRTHDATE) > @year";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@year", year);
@@ -151,33 +151,33 @@ namespace ConsoleApp2
 
             while (reader.Read())
             {
-                Student temp = new Student();
-                temp.StudentId = reader.GetInt32(0);
+                Donor temp = new Donor();
+                temp.DonorId = reader.GetInt32(0);
                 temp.FirstName = reader.GetString(1);
                 temp.LastName = reader.GetString(2);
                 temp.Gender = reader.GetString(3)[0];
                 temp.BirthDate = DateOnly.FromDateTime(reader.GetDateTime(4));
 
-                students.Add(temp);
+                donors.Add(temp);
             }
 
             conn.Close();
 
-            return students;
+            return donors;
 
 
         }
 
 
-        public List<StudentScores> GetStudentScores()
+        public List<DonorScores> GetDonorScores()
         {
-            List<StudentScores> scores = new List<StudentScores>();
+            List<DonorScores> scores = new List<DonorScores>();
 
             SqlConnection conn = new SqlConnection(_connStr);
-            string sql = @"Select st.STUDENTID, st.FIRSTNAME, st.LASTNAME, 
+            string sql = @"Select d.DONORID, d.FIRSTNAME, d.LASTNAME, 
                       cs.COURSENAME, sc.MARK, sc.GRADE 
-                      from student st 
-                      join SCORES sc on st.STUDENTID = sc.STUDENTID
+                      from donor d 
+                      join SCORES sc on d.DONORID = sc.DONORID
                       join COURSE cs on sc.COURSEID = cs.COURSEID";
 
             SqlCommand cmd = new SqlCommand(sql, conn);
@@ -188,8 +188,8 @@ namespace ConsoleApp2
 
             while (reader.Read())
             {
-                StudentScores temp = new StudentScores();
-                temp.StudentId = reader.GetInt32(0);
+                DonorScores temp = new DonorScores();
+                temp.DonorId = reader.GetInt32(0);
                 temp.FirstName = reader.GetString(1);
                 temp.LastName = reader.GetString(2);
                 temp.Course = reader.GetString(3);
@@ -208,9 +208,9 @@ namespace ConsoleApp2
 
     }
 
-    public class Student
+    public class Donor
     {
-        public int StudentId { get; set; }
+        public int DonorId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Char Gender { get; set; }
@@ -222,9 +222,9 @@ namespace ConsoleApp2
         public int StartingYear { get; set; }
     }
 
-    public class StudentScores
+    public class DonorScores
     {
-        public int StudentId { get; set; }
+        public int DonorId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Course { get; set; }

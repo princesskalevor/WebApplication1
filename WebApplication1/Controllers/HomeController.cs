@@ -18,46 +18,82 @@ namespace WebApplication1.Controllers
         }
 
         // Main dashboard view
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = new DashboardViewModel
+            try
             {
-                TotalDonors = _context.Student.Count(),
+                var totalDonors = await _context.Donor.CountAsync();
+                var totalRequests = await _context.BloodRequest.CountAsync();
+                var totalDonations = await _context.BloodDonation.CountAsync();
+                var totalInventory = await _context.BloodInventory.CountAsync();
 
-                TotalRequests = _context.BloodRequests.Count(),
+                var recentRequests = await _context.BloodRequest
+                    .Include(br => br.Recipient)
+                    .OrderByDescending(br => br.RequestedDate)
+                    .Take(5)
+                    .ToListAsync();
 
-                // Fully qualify BloodRequest in LINQ to avoid ambiguity
-                TotalDonations = _context.BloodRequests
-                    .Count((WebApplication1.Models.BloodRequest r) => r.Status == "Verified"),
+                var recentDonations = await _context.BloodDonation
+                    .Include(bd => bd.Donor)
+                    .OrderByDescending(bd => bd.DonationDate)
+                    .Take(5)
+                    .ToListAsync();
 
-                RecentRequests = _context.BloodRequests
-                    .OrderByDescending((WebApplication1.Models.BloodRequest r) => r.RequestId)
-                    .Take(3)
-                    .ToList(),
+                ViewBag.TotalDonors = totalDonors;
+                ViewBag.TotalRequests = totalRequests;
+                ViewBag.TotalDonations = totalDonations;
+                ViewBag.TotalInventory = totalInventory;
+                ViewBag.RecentRequests = recentRequests;
+                ViewBag.RecentDonations = recentDonations;
 
-                AvailableUnits = 100 // Example static value
-            };
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading dashboard data");
+                
+                // Return default values if database is not ready
+                ViewBag.TotalDonors = 0;
+                ViewBag.TotalRequests = 0;
+                ViewBag.TotalDonations = 0;
+                ViewBag.TotalInventory = 0;
+                ViewBag.RecentRequests = new List<BloodRequest>();
+                ViewBag.RecentDonations = new List<BloodDonation>();
 
-            return View(model);
+                TempData["Error"] = "Database not ready. Please run the database setup script.";
+                return View();
+            }
         }
 
-        // Search donors by blood type and hall
+        // Search donors by blood type and other criteria
         [HttpPost]
-        public IActionResult SearchDonor(string bloodType, string hall)
+        public async Task<IActionResult> SearchDonor(string searchTerm)
         {
-            var results = _context.Student
-                .Where(s => (string.IsNullOrEmpty(bloodType) || s.BloodType == bloodType)
-                         && (string.IsNullOrEmpty(hall) || s.Hall == hall))
-                .Select(s => new
+            try
+            {
+                if (string.IsNullOrEmpty(searchTerm))
                 {
-                    Name = $"{s.FirstName} {s.LastName}",
-                    BloodType = s.BloodType,
-                    Hall = s.Hall,
-                    Department = s.Department
-                })
-                .ToList();
+                    TempData["Error"] = "Please enter a search term.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            return PartialView("_DonorResultsPartial", results);
+                var donors = await _context.Donor
+                    .Where(d => d.FirstName.Contains(searchTerm) || 
+                               d.LastName.Contains(searchTerm) || 
+                               d.EmailAddress.Contains(searchTerm) ||
+                               d.BloodType.Contains(searchTerm))
+                    .ToListAsync();
+
+                ViewBag.SearchResults = donors;
+                ViewBag.SearchTerm = searchTerm;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching donors");
+                TempData["Error"] = "Search failed. Please try again.";
+            }
+
+            return View("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

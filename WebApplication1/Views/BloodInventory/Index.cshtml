@@ -1,0 +1,112 @@
+@model IEnumerable<WebApplication1.Models.BloodInventory>
+
+@{
+    ViewData["Title"] = "Blood Inventory";
+}
+
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <i data-lucide="package" class="w-8 h-8 text-orange-600"></i>
+                Blood Inventory
+            </h1>
+            <p class="text-gray-600 mt-2">Manage blood inventory and storage</p>
+        </div>
+        <a href="/BloodInventory/Create" class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            Add Inventory Unit
+        </a>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            @TempData["Message"]
+        </div>
+    }
+
+    <!-- Inventory Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiration Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Storage Location</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var unit in Model)
+                    {
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                #@unit.UnitId
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    @unit.BloodType
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @(unit.Quantity?.ToString() ?? "Not specified") unit(s)
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @unit.ExpirationDate.ToString("MMM dd, yyyy")
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @(unit.StorageLocation ?? "Not specified")
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @{
+                                    var statusColor = unit.Status switch
+                                    {
+                                        "Available" => "bg-green-100 text-green-800",
+                                        "Used" => "bg-red-100 text-red-800",
+                                        "Expired" => "bg-gray-100 text-gray-800",
+                                        _ => "bg-yellow-100 text-yellow-800"
+                                    };
+                                }
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @statusColor">
+                                    @(unit.Status ?? "Unknown")
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <a href="/BloodInventory/Details/@unit.UnitId" class="text-blue-600 hover:text-blue-900">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="/BloodInventory/Edit/@unit.UnitId" class="text-indigo-600 hover:text-indigo-900">
+                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="/BloodInventory/Delete/@unit.UnitId" class="text-red-600 hover:text-red-900">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-12">
+                <i data-lucide="package" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No inventory found</h3>
+                <p class="text-gray-500 mb-6">Get started by adding your first inventory unit.</p>
+                <a href="/BloodInventory/Create" class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition">
+                    Add First Unit
+                </a>
+            </div>
+        }
+    </div>
+</div>

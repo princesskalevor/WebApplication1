@@ -53,9 +53,13 @@
                 <a href="#drives" class="hover:text-red-600">Drives</a>
                 <a href="#contact" class="hover:text-red-600">Contact</a>
             </nav>
-            <button class="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:shadow-lg">
-                Login
-            </button>
+            <div class="flex gap-4">
+                <a href="/BloodRequest/Create" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                    Request Blood
+                </a>
+                <a href="/Account/Login" class="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:shadow-lg">
+                    Login
+                </a>
         </div>
     </header>
 
@@ -85,5 +89,7 @@
     </script>
 
     @RenderSection("Scripts", required: false)
+    
+
 </body>
 </html>

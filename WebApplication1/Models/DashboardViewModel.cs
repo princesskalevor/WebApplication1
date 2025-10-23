@@ -4,19 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
 {
-    public class BloodRequest
-    {
-        [Key]
-        public int RequestId { get; set; }  // Primary key
-
-        public string PatientName { get; set; }
-        public string BloodType { get; set; }
-        public string Hall { get; set; }
-        public string Department { get; set; }
-        public string Status { get; set; }
-        public DateTime RequestDate { get; set; }
-        public int UnitsNeeded { get; set; }
-    }
+   
 
     public class DashboardViewModel
     {

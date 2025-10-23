@@ -1,27 +1,5 @@
 ﻿@model WebApplication1.Models.DashboardViewModel
 
-@{
-    ViewData["Title"] = "BloodConnect";
-}
-
-<!-- Tailwind CSS CDN -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
-
-<!-- NAVBAR -->
-<nav class="bg-white shadow-md py-4 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-6">
-        <div class="font-bold text-2xl text-red-600">BloodConnect</div>
-        <ul class="flex space-x-6">
-            <li><a href="javascript:void(0)" onclick="scrollToSection('statsContainer')" class="hover:text-red-600 transition">Find Donor</a></li>
-            <li><a href="javascript:void(0)" onclick="scrollToSection('searchForm')" class="hover:text-red-600 transition">Request Blood</a></li>
-            <li><a href="javascript:void(0)" onclick="scrollToSection('urgentRequestsContainer')" class="hover:text-red-600 transition">Requests</a></li>
-            <li><a href="javascript:void(0)" onclick="scrollToSection('bloodDrivesContainer')" class="hover:text-red-600 transition">Drives</a></li>
-            <li><a href="javascript:void(0)" onclick="scrollToSection('contactSection')" class="hover:text-red-600 transition">Contact</a></li>
-            <li><a href="/Account/Login" class="hover:text-red-600 transition">Login</a></li>
-        </ul>
-    </div>
-</nav>
-
 <!-- HERO SECTION -->
 <section class="text-center mb-12">
     <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
@@ -51,10 +29,10 @@
 <!-- TAB NAVIGATION -->
 <div class="flex justify-center mb-8">
     <div class="bg-white rounded-full p-1 shadow-md inline-flex">
-        <button id="findTab" class="tab-btn active px-6 py-3 rounded-full font-semibold transition-all bg-gradient-to-r from-red-400 to-red-600 text-white">
+        <button id="findTab" class="tab-btn active px-6 py-3 rounded-full font-semibold transition-all">
             Find Donor
         </button>
-        <button id="requestTab" class="tab-btn px-6 py-3 rounded-full font-semibold transition-all text-gray-600">
+        <button id="requestTab" class="tab-btn px-6 py-3 rounded-full font-semibold transition-all">
             Request Blood
         </button>
     </div>
@@ -104,6 +82,7 @@
             </div>
         </form>
 
+        <!-- DONOR RESULTS WILL APPEAR HERE -->
         <div id="donorResultsContainer" class="mt-6"></div>
 
         <div id="requestNote" class="hidden mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
@@ -118,7 +97,7 @@
 </section>
 
 <!-- URGENT REQUESTS -->
-<section id="urgentRequestsContainer" class="mb-12">
+<section id="requests" class="mb-12">
     <h2 class="text-3xl font-bold text-gray-900 mb-6">Urgent Requests from Students</h2>
     <div class="grid md:grid-cols-3 gap-6">
         @foreach (var req in Model.RecentRequests)
@@ -145,7 +124,6 @@
                     <button class="respond-btn px-4 py-2 bg-red-50 text-red-600 rounded-lg font-semibold hover:bg-red-100 transition-colors" data-requestid="@req.RequestId">
                         I Can Help
                     </button>
-
                 </div>
             </div>
         }
@@ -153,7 +131,7 @@
 </section>
 
 <!-- BLOOD DRIVES -->
-<section id="bloodDrivesContainer" class="mb-12">
+<section id="drives" class="mb-12">
     <h2 class="text-3xl font-bold text-gray-900 mb-6">Upcoming Campus Blood Drives</h2>
     <div class="grid md:grid-cols-2 gap-6">
         <div class="drive-card bg-gradient-to-br from-yellow-50 to-yellow-200 rounded-2xl shadow-md hover:shadow-xl transition-shadow p-6 border-t-4 border-yellow-400">
@@ -182,90 +160,77 @@
 </section>
 
 <!-- CONTACT SECTION -->
-<section id="contactSection" class="mb-12">
+<section id="contact" class="mb-12">
     <h2 class="text-3xl font-bold text-gray-900 mb-6">Contact Us</h2>
     <p class="text-gray-700">Email: bloodconnect@knust.edu.gh</p>
     <p class="text-gray-700">Phone: +233 50 123 4567</p>
 </section>
 
 <!-- JAVASCRIPT -->
-<script>
-    // TAB SWITCHING
-    const findTab = document.getElementById('findTab');
-    const requestTab = document.getElementById('requestTab');
-    const searchTitle = document.getElementById('searchTitle');
-    const requestNote = document.getElementById('requestNote');
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // TAB SWITCHING
+        const findTab = document.getElementById('findTab');
+        const requestTab = document.getElementById('requestTab');
+        const searchTitle = document.getElementById('searchTitle');
+        const requestNote = document.getElementById('requestNote');
 
-    findTab.addEventListener('click', () => {
-        findTab.classList.add('bg-gradient-to-r', 'from-red-400', 'to-red-600', 'text-white');
-        findTab.classList.remove('text-gray-600');
-        requestTab.classList.remove('bg-gradient-to-r', 'from-red-400', 'to-red-600', 'text-white');
-        requestTab.classList.add('text-gray-600');
+        findTab.addEventListener('click', () => {
+            findTab.classList.add('active');
+            requestTab.classList.remove('active');
+            searchTitle.textContent = 'Find a Blood Donor';
+            requestNote.classList.add('hidden');
+        });
 
-        searchTitle.textContent = 'Find a Blood Donor';
-        requestNote.classList.add('hidden');
-    });
+        requestTab.addEventListener('click', () => {
+            requestTab.classList.add('active');
+            findTab.classList.remove('active');
+            searchTitle.textContent = 'Request Blood';
+            requestNote.classList.remove('hidden');
+        });
 
-    requestTab.addEventListener('click', () => {
-        requestTab.classList.add('bg-gradient-to-r', 'from-red-400', 'to-red-600', 'text-white');
-        requestTab.classList.remove('text-gray-600');
-        findTab.classList.remove('bg-gradient-to-r', 'from-red-400', 'to-red-600', 'text-white');
-        findTab.classList.add('text-gray-600');
+        // SCROLL TO SECTION
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if(el) el.scrollIntoView({ behavior: 'smooth' });
+        }
 
-        searchTitle.textContent = 'Request Blood';
-        requestNote.classList.remove('hidden');
-    });
+        // AJAX: Search Donor
+        $(document).ready(function() {
+            $('#searchForm').on('submit', function(e) {
+                e.preventDefault();
+                var bloodType = $('#bloodType').val();
+                var hall = $('#hall').val();
+                $.ajax({
+                    url: '@Url.Action("SearchDonor", "Home")',
+                    type: 'POST',
+                    data: { bloodType: bloodType, hall: hall },
+                    success: function(result) {
+                        $('#requestNote').hide();
+                        $('#donorResultsContainer').html(result);
+                    },
+                    error: function() {
+                        alert('Error fetching donors. Please try again.');
+                    }
+                });
+            });
 
-    // SCROLL TO SECTION
-    function scrollToSection(id) {
-        const el = document.getElementById(id);
-        if(el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#searchForm').on('submit', function(e) {
-            e.preventDefault(); // prevent page reload
-
-            var bloodType = $('#bloodType').val();
-            var hall = $('#hall').val();
-
-            $.ajax({
-                url: '@Url.Action("SearchDonor", "Home")',
-                type: 'POST',
-                data: { bloodType: bloodType, hall: hall },
-                success: function(result) {
-                    // replace the content of the container with the returned partial view
-                    $('#requestNote').hide(); // hide note if any
-                    $('#donorResultsContainer').html(result);
-                },
-                error: function() {
-                    alert('Error fetching donors. Please try again.');
-                }
+            // Respond to urgent requests
+            $('.respond-btn').click(function() {
+                var requestId = $(this).data('requestid');
+                $.ajax({
+                    url: '@Url.Action("HelpRequest", "Home")',
+                    type: 'POST',
+                    data: { requestId: requestId },
+                    success: function() {
+                        alert('You have successfully responded to this request!');
+                    },
+                    error: function() {
+                        alert('Error. Please try again.');
+                    }
+                });
             });
         });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        // Respond to urgent request
-        $('.respond-btn').click(function() {
-            var requestId = $(this).data('requestid');
-
-            $.ajax({
-                url: '@Url.Action("HelpRequest", "Home")',
-                type: 'POST',
-                data: { requestId: requestId },
-                success: function(response) {
-                    alert('You have successfully responded to this request!');
-                },
-                error: function() {
-                    alert('Error. Please try again.');
-                }
-            });
-        });
-    });
-</script>
-
+    </script>
+}

@@ -25,7 +25,7 @@ namespace WebApplication1.Models
         [Column("EXPIRATIONDATE")]
         [DataType(DataType.Date)]
         [Display(Name = "Expiration Date")]
-        public DateOnly ExpirationDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
 
         [Column("STORAGELOCATION")]
         [StringLength(100)]
